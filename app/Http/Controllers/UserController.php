@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class UserController extends Controller
 {
+    use HasRoles;
     /**
      * Write code on Method
      *
