@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Spatie\Permission\Traits\HasRoles;
-
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -17,7 +17,13 @@ class UserController extends Controller
      */
     public function dashboard(Request $request)
     {
-        return view('dashboard');
+        if (Auth::check()) {
+            return view('dashboard');
+        }
+        return redirect()->route('loadLoginPage')
+        ->withErrors([
+            'email' => 'Please, enter credentials.',
+        ])->onlyInput('email');
     }
 
     /**
@@ -27,7 +33,18 @@ class UserController extends Controller
      */
     public function users(Request $request)
     {
-        $users = User::get();
+        if (Auth::check()) {
+            if (Auth::user()->hasRole('admin')) {
+                 $users = User::get();
         return view('users', compact('users'));
+            }else {
+                return redirect('/dashboard')->with('error','Your role is not available for this view');
+            }
+
+        }
+        return redirect()->route('loadLoginPage')
+        ->withErrors([
+            'email' => 'Please, enter credentials.',
+        ])->onlyInput('email');
     }
 }

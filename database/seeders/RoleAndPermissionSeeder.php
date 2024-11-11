@@ -61,6 +61,7 @@ class RoleAndPermissionSeeder extends Seeder
          $adminUser = User::create([
             'name' => 'Administrador',
             'email' => 'admin@courses.com',
+            'date_of_birth' => '1993/02/16',
             'email_verified_at' => now(),
             'password' =>  Hash::make('password'),
             'remember_token' => Str::random(10),
