@@ -89,12 +89,36 @@ class AuthController extends Controller
             return redirect('/login/form')->with('error',$e->getMessage());
         }
     }
+       // Method for logging in (API with Sanctum/Passport)
+       public function loginApi(Request $request)
+       {
+           $credentials = $request->only('email', 'password');
+
+           if (Auth::guard('web')->attempt($credentials)) {
+               $user = Auth::user();
+               $token = $user->createToken('API Token')->plainTextToken;
+
+               return response()->json([
+                   'access_token' => $token,
+                   'token_type' => 'Bearer',
+               ]);
+           }
+
+           return response()->json(['error' => 'Invalid credentials'], 401);
+       }
     // perform logout function here
     public function LogoutUser(Request $request){
         Session::flush();
         Auth::logout();
         return redirect('/login/form');
     }
+      // Method for logging out (API with Sanctum/Passport)
+      public function logoutApi(Request $request)
+      {
+          $request->user()->currentAccessToken()->delete();
+
+          return response()->json(['message' => 'Logged out successfully']);
+      }
     // this for password resetting..
     public function forgotPassword(){
         return view('forgot-password');
